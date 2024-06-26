@@ -10,6 +10,12 @@ const demoUsers = [
   { id: 3, username: "user3", displayName: "U3" },
 ];
 
+const demoProducts = [
+  { id: 1, name: "product1", price: 100 },
+  { id: 2, name: "product2", price: 200 },
+  { id: 3, name: "product3", price: 300 },
+];
+
 app.get("/", (request, response) => {
   response.status(201).send({ message: "Hello Me" });
 });
@@ -23,7 +29,9 @@ app.get("/api/users/:id", (request, response) => {
   const parsedId = parseInt(request.params.id);
   console.log(parsedId);
   if (isNaN(parsedId)) {
-    return response.status(400).send({ message: "Invalid ID supplied" });
+    return response
+      .status(400)
+      .send({ message: "Bad Request: Invalid ID supplied" });
   }
 
   const findUser = demoUsers.find((user) => user.id === parsedId);
@@ -35,11 +43,27 @@ app.get("/api/users/:id", (request, response) => {
 });
 
 app.get("/api/products", (request, response) => {
-  response.send([
-    { id: 1, name: "product1", price: 100 },
-    { id: 2, name: "product2", price: 200 },
-    { id: 3, name: "product3", price: 300 },
-  ]);
+  response.send(demoProducts);
+});
+
+app.get("/api/products/:id", (request, response) => {
+  const parsedProductId = parseInt(request.params.id);
+
+  if (isNaN(parsedProductId)) {
+    return response
+      .status(400)
+      .send({ message: "Bad Request:Invalid ID supplied" });
+  }
+
+  const findProduct = demoProducts.find(
+    (product) => product.id === parsedProductId
+  );
+
+  if (!findProduct) {
+    return response.status(404).send({ message: "Product not found" });
+  }
+
+  response.send(findProduct);
 });
 
 app.listen(PORT, () => {
