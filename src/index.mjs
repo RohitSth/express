@@ -21,7 +21,17 @@ app.get("/", (request, response) => {
 });
 
 app.get("/api/users", (request, response) => {
-  response.send(demoUsers);
+  console.log(request.query);
+  const {
+    query: { filter, value },
+  } = request;
+
+  // when filter and value are undefined
+  if (!filter && !value) response.send(demoUsers);
+
+  // when filter and value is defined
+  if (filter && value)
+    response.send(demoUsers.filter((user) => user[filter].includes(value)));
 });
 
 app.get("/api/users/:id", (request, response) => {
