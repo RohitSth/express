@@ -53,7 +53,16 @@ app.get("/api/users/:id", (request, response) => {
 });
 
 app.get("/api/products", (request, response) => {
-  response.send(demoProducts);
+  const {
+    query: { filter, value },
+  } = request;
+
+  if (filter && value) {
+    return response.send(
+      demoProducts.filter((product) => product[filter].includes(value))
+    );
+  }
+  return response.send(demoProducts);
 });
 
 app.get("/api/products/:id", (request, response) => {
